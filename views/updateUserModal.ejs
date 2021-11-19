@@ -1,0 +1,32 @@
+<!-- update user Modal  -->
+<div class="modal" id="updateUserModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Update user information</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+          <form action="/user/update" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="userId" value='<%= userProfile._id %>'>
+              <input class="post-text" type="text" name="usernameUpdate" value="<%= userProfile.username %>"></input>
+
+              <label class="file">
+                <input type="file" id="file" name="useravatarUpdate" aria-label="File browser example">
+                <span class="file-custom"></span>
+              </label>
+                            
+              <div class="d-flex justify-content-lg-end mt-3">
+                  <button type="submit" class="btn btn-primary mr-2">Update user</button>
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              </div>
+          </form>
+        </div>
+  
+      </div>
+    </div>
+</div>

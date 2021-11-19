@@ -1,0 +1,242 @@
+.navbar-custom {
+    background-color: #000000;
+}
+
+.navbar-custom a {
+    color: #ffffff
+}
+
+.navbar-custom a:hover {
+    color: blue;
+}
+
+.container-fluid {
+    margin-top: 70px;
+}
+
+.link-container {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.link-container h4 {
+    margin: auto 0 auto 15px;
+}
+
+.create-post {
+    /* border: 1px solid red; */
+    display: flex;
+    justify-content: space-between;
+}
+
+.create-post input {
+    margin-left: 10px;
+    width: 95%;
+    line-height: 30px;
+    border-radius: 50px;
+    padding: 0 15px;
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.avatar2 {
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+.post-text {
+    width: 100%;
+    border: none;
+    padding: 10px;
+    max-height: 150px;
+    margin-bottom: 15px;
+}
+
+.card {
+  margin-bottom: 15px;
+}
+
+.post-owner a {
+    display: flex;
+    justify-content: flex-start;
+    text-decoration: none;
+    cursor: pointer;
+    color: #000000;
+}
+
+.post-owner p {
+  margin: auto 0 auto 15px;
+  font-size: 25px;
+}
+
+.post-owner small {
+  margin: auto 0 auto 15px;
+}
+
+.post-body p {
+  font-size: 20px;
+  margin: 0;
+}
+
+.post-body img {
+  display: block;
+  width: 100%;
+  max-height: 500px;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  object-position: center;
+}
+
+.post-like-cmt {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 5px 0px;
+}
+
+.post-like-cmt p {
+  margin: 5px 0 -10px;
+}
+
+.profile-avatar {
+  border-radius: 50%;
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+}
+
+.banner {
+  background-color: #cfcfcf;
+  padding: 15px 0;
+}
+
+.profile-info {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.profile-info h1 {
+  margin: auto 0 auto 15px;
+}
+
+.profile-update-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.profile-update-btn a {
+  margin-bottom: 10px;
+}
+
+.avatar-comment {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.comment-input-box {
+  display: flex;
+  justify-content: flex-start;
+  height: 40px;
+}
+
+.comment-input-box form {
+  display: flex;
+  width: 100%;
+}
+
+.comment-input-box button {
+  padding: 5px;
+  background-color: blue;
+  color: #ffffff;
+}
+
+.comment-input-box input {
+  margin: 0 10px;
+  width: 95%;
+  line-height: 30px;
+  border-radius: 50px;
+  padding: 0 15px;
+}
+
+.comment-box {
+  display: flex;
+  justify-content: flex-start;
+  margin: 10px 0;
+}
+
+.comment-section {
+  margin-top: 10px;
+  border-top: 1px solid #cfcfcf;
+}
+
+.comment-box .comment-user-info {
+  margin: 0 10px;
+  background: #c0c0c0;
+  border-radius: 10px;
+  padding: 10px 10px 0;
+  min-width: 250px;
+}
+
+.line {
+  color: #cfcfcf;
+  margin: -5px auto 0;
+}
+
+.post-button {
+  margin: -10px auto 0;
+  padding: 0;
+}
+
+.post-button a {
+  margin: 15px 0 -5px;
+  text-decoration: none;
+  text-align: center;
+  padding: 10px 0;
+  color: #000000;
+  text-transform: capitalize;
+}
+
+.post-button a i{
+  margin-right: 5px;
+}
+
+.fas {
+  color: red;
+}
+
+.far {
+  color: blue;
+}
+
+.updateIcon {
+  color: blue;
+  margin-right: 5px;
+}
+
+.dots {
+  color: #cfcfcf;
+}
+
+.post-button a:hover {
+  border-radius: 5px;
+  background: #cfcfcf;
+}
+
+.comment-btn {
+  text-align: center;
+}
+
+.size {
+  font-size: 20px;
+}
+

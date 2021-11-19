@@ -1,0 +1,143 @@
+<% include header.ejs %>
+<body>
+
+    <% include navbar.ejs %>
+
+    <section class="container-fluid row">
+        <!-- Left column nav  -->
+        <div class="col-lg-3">
+            <div class="list-group">
+                <a href="/user/<%= user._id %>" class="list-group-item list-group-item-action">
+                    <div class="link-container">
+                        <img class="avatar" src="/images/<%= user.avatar %>" alt="avatar">
+                        <h4><%= user.username %></h4>
+                    </div>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">Your post</a>
+                <a href="#" class="list-group-item list-group-item-action">Third item</a>
+            </div>
+        </div>
+
+        <!-- Post section and create post -->
+        <div class="col-lg-6">
+            <!-- create post  -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="create-post">
+                        <img class="avatar"  src="/images/<%= user.avatar %>" alt="avatar">
+                        <input type="text" placeholder="Share your though" onkeydown="return false;" data-toggle="modal" data-target="#createPost">
+                    </div>
+                </div>
+                <div class="card-footer">Create your post here</div>
+            </div>
+            <hr>
+
+            <!-- Post section start here  -->
+            <% data.forEach(post => { %> 
+            
+            <div class="card">
+                <div class="card-header d-flex justify-content-sm-between">
+                    <div class="post-owner">
+                        <a href="/user/<%= post.postAuthor.id %>">
+                            <img class="avatar2" src="/images/<%= post.postAuthor.avatar %>" alt="">
+                            <div>
+                                <p><%= post.postAuthor.username %></p>
+                                <small>
+                                    <%= post.createAt.toDateString()%> at <%= post.createAt.toLocaleTimeString() %>
+                                </small>
+                            </div>
+                        </a>
+                    </div>
+                    <div>
+                        <% if (locals.userId === post.postAuthor._id.toString()) { %> 
+                            <a data-toggle="modal" data-target="#updatePost<%= post._id %>"><i class="updateIcon fas fa-edit"></i></a>
+                            <a href="/post/delete/<%= post._id %>"><i class="fas fa-trash-alt"></i></a>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="post-body">
+                        <% if(post.postImages != null) { %> 
+                            <p class="mb-2"><%= post.postContent %></p>
+                            <img src="/images/<%= post.postImages %>" alt="">
+                        <% } else { %>        
+                            <p><%= post.postContent %></p>
+                        <% } %>
+                    </div>
+                    <div class="post-like-cmt">
+                        <p><i class="size fas fa-heart"></i> <%= post.likes.length %></p>
+                        <p><%= post.comments.length %> Bình luận</p>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <hr class="line">
+                    <div class="container row post-button">
+                        <% if(post.likes.some(userid => userid.toString() === locals.userId)) { %>
+                            <a href="/post/dislike/<%= post._id %>" class="col-lg-6"><i class="fas fa-heart"></i>Thích</a>
+                        <% } else { %>
+                            <a href="/post/like/<%= post._id %>" class="col-lg-6"><i class="far fa-heart"></i>Thích</a>
+                        <% } %>
+                        <a data-toggle="collapse" data-target="#cmt<%= post._id %>" class="col-lg-6"><i class="far fa-comment-alt"></i>Bình luận</a>
+                    </div>
+                    <!-- post comment here  -->
+                    <div id="cmt<%= post._id %>" class="collapse comment-section">
+
+                        <% post.comments.forEach(cmt => { %>
+                            <div class="comment-box">
+                                <img class="avatar-comment"  src="/images/<%= cmt.cmtAuthor.avatar %>" alt="avatar">
+                                <div class="comment-user-info">
+                                    <div class="cmt-info">
+                                        <strong><%= cmt.cmtAuthor.username %></strong>
+                                        <p><%= cmt.cmtText %></p>
+                                    </div>
+                                </div>
+                                <% if (locals.userId === cmt.cmtAuthor._id.toString()) { %> 
+                                    <div class="dropdown">
+                                        <button type="button" class="btn rounded-circle dropdown-toggle" data-toggle="dropdown">
+                                            <i class="dots fas fa-ellipsis-h"></i>
+                                        </button>
+                                        <div class="dropdown-menu comment-btn">
+                                            <a class="dropwdown-item" data-toggle="modal" data-target="#updateCmt<%= cmt._id %>"><i class="updateIcon fas fa-edit"></i></a>
+                                            <a class="dropwdown-item" href="/post/comment/delete/<%= cmt._id %>"><i class="fas fa-trash-alt"></i></a>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            </div>
+    
+                            <% include updateCmt.ejs %>
+                        <% }); %>
+                        <hr>
+                        <!-- user comment input box  -->
+                        <div class="comment-input-box">
+                            <img class="avatar-comment"  src="/images/<%= user.avatar %>" alt="avatar">
+                            <form id="cmtForm" action="/post/comment/create" method="POST">
+                                <input type="hidden" name="postid" value="<%= post._id %>">
+                                <input type="text" name="usercomment" placeholder="Leave your comment">
+                                <button type="submit">Gửi</button>
+                            </form>
+                        </div>                 
+                    </div>
+                </div>
+            </div>
+
+            <% include updateModal.ejs %>
+            
+            <% }); %>
+                
+        </div>
+
+        <!-- something that i will do in the future  -->
+        <div class="col-lg-3">
+            <div class="card">
+                <div class="card-body">
+                    <h3>chat box feature coming soon</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <% include createModal.ejs %>
+
+    <script src="javascripts/main.js"></script>
+</body>
+</html>

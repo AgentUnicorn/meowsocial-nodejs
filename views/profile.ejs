@@ -1,0 +1,131 @@
+<% include header.ejs %>
+<body>
+    <% include navbar.ejs %>
+
+    <section class="container-fluid row">
+        <div class="col-lg-6" style="margin: auto;">
+            <!-- User info  -->
+            <div class="row banner">
+                <div class="profile-info col-lg-6 col-sm-12">
+                    <img class="profile-avatar"  src="/images/<%= userProfile.avatar %>" alt="avatar">
+                    <h1><%= userProfile.username %>
+                        <button class="btn btn-info" disabled><%= userProfile.followers.length %> người theo dõi</button>
+                    </h1>
+                </div>
+                <div class="profile-update-btn col-lg-6">
+                    <% if(locals.userId === userProfile.id) { %>
+                        <a data-toggle="modal" data-target="#updateUserModal">Cập nhật thông tin các nhân</a>
+                    <% } else { %>
+                        <% if(userProfile.followers.some(e => e == locals.userId)) { %>
+                            <form action="/user/follow" method="POST">
+                                <input type="hidden" name="action" value="unfollow">
+                                <input type="hidden" name="following" value="<%= userProfile._id %>">
+                                <button type="submit" class="btn btn-danger">Hủy theo dõi</buton>
+                            </form>
+                        <% } else { %>
+                            <form action="/user/follow" method="POST">
+                                <input type="hidden" name="action" value="follow">
+                                <input type="hidden" name="following" value="<%= userProfile._id %>">
+                                <button type="submit" class="btn btn-primary">Theo dõi</buton>
+                            </form>
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+            <% include updateUserModal.ejs %>
+            <hr>
+            
+            <!-- User post  -->
+            <% data.forEach(post => { %> 
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-sm-between">
+                            <div class="post-owner">
+                                <a href="/user/<%= post.postAuthor._id %>">
+                                    <img class="avatar2" src="/images/<%= post.postAuthor.avatar %>" alt="">
+                                    <div>
+                                        <p><%= post.postAuthor.username %></p>
+                                        <small>
+                                            <%= post.createAt.toDateString()%> at <%= post.createAt.toLocaleTimeString() %>
+                                        </small>
+                                    </div>
+                                </a>
+                            </div>
+                            <div>
+                                <% if (locals.userId === post.postAuthor._id.toString()) { %> 
+                                    <a data-toggle="modal" data-target="#updatePost<%= post._id %>"><i class="updateIcon fas fa-edit"></i></a>
+                                    <a href="/post/delete/<%= post._id %>"><i class="fas fa-trash-alt"></i></a>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="post-body">
+                                <% if(post.postImages != null) { %> 
+                                    <p class="mb-2"><%= post.postContent %></p>
+                                    <img src="/images/<%= post.postImages %>" alt="">
+                                <% } else { %>        
+                                    <p><%= post.postContent %></p>
+                                <% } %>
+                            </div>
+                            <div class="post-like-cmt">
+                                <p><i class="size fas fa-heart"></i> <%= post.likes.length %></p>
+                                <p><%= post.comments.length %> Bình luận</p>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <hr class="line">
+                            <div class="container row post-button">
+                                <% if(post.likes.some(userid => userid.toString() === locals.userId)) { %>
+                                    <a href="/post/dislike/<%= post._id %>" class="col-lg-6"><i class="fas fa-heart"></i>Thích</a>
+                                <% } else { %>
+                                    <a href="/post/like/<%= post._id %>" class="col-lg-6"><i class="far fa-heart"></i>Thích</a>
+                                <% } %>
+                                <a data-toggle="collapse" data-target="#cmt<%= post._id %>" class="col-lg-6"><i class="far fa-comment-alt"></i>Bình luận</a>
+                            </div>
+                            <!-- post comment here  -->
+                            <div id="cmt<%= post._id %>" class="collapse comment-section">
+        
+                                <% post.comments.forEach(cmt => { %>
+                                    <div class="comment-box">
+                                        <img class="avatar-comment"  src="/images/<%= cmt.cmtAuthor.avatar %>" alt="avatar">
+                                        <div class="comment-user-info">
+                                            <div class="cmt-info">
+                                                <strong><%= cmt.cmtAuthor.username %></strong>
+                                                <p><%= cmt.cmtText %></p>
+                                            </div>
+                                        </div>
+                                        <% if (locals.userId === cmt.cmtAuthor._id.toString()) { %> 
+                                            <div class="dropdown">
+                                                <button type="button" class="btn rounded-circle dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="dots fas fa-ellipsis-h"></i>
+                                                </button>
+                                                <div class="dropdown-menu comment-btn">
+                                                    <a class="dropwdown-item" data-toggle="modal" data-target="#updateCmt<%= cmt._id %>"><i class="updateIcon fas fa-edit"></i></a>
+                                                    <a class="dropwdown-item" href="/post/comment/delete/<%= cmt._id %>"><i class="fas fa-trash-alt"></i></a>
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    </div>
+            
+                                    <% include updateCmt.ejs %>
+                                <% }); %>
+                                <hr>
+                                <!-- user comment input box  -->
+                                <div class="comment-input-box">
+                                    <img class="avatar-comment"  src="/images/<%= userProfile.avatar %>" alt="avatar">
+                                    <form id="cmtForm" action="/post/comment/create" method="POST">
+                                        <input type="hidden" name="postid" value="<%= post._id %>">
+                                        <input type="text" name="usercomment" placeholder="Leave your comment">
+                                        <button type="submit">Gửi</button>
+                                    </form>
+                                </div>                 
+                            </div>
+                        </div>
+                    </div>
+        
+                <% }); %>
+                    
+
+        </div>
+    </section>
+</body>
+</html>

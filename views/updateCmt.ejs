@@ -1,0 +1,23 @@
+<!-- update Modal  -->
+<div class="modal" id="updateCmt<%= cmt._id %>">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Update comment</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+            <form action="/post/comment/update" method="POST">
+                <input type="hidden" name="cmtid" value="<%= cmt._id %>">
+                <input type="text" name="updatecomment" vale="<%= cmt.cmtText %>">
+                <button type="submit">Gửi</button>
+            </form>
+        </div>
+  
+      </div>
+    </div>
+</div>

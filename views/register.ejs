@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Media</title>
+
+  <!-- Boostrap link  -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+
+</head>
+<body>
+  
+  <div class="form-container">
+    <form action="/register" method="POST" class="form-signin">
+        <div class="text-center mb-3">
+          <img src="images/logos_transparent.png" alt="logo" width="200" height="200">
+          <h1 class="h3 font-weight-normal">Signup your account</h1>
+          <small>Already have an account? <a href="/signin">Signin here!</a></small>
+      </div>
+      <input name="username" class="form-control" placeholder="Username" required autofocus>
+      <input name="useremail" type="email" class="form-control" placeholder="Example@example.com" required>
+      <input name="userpassword" type="password" class="form-control" placeholder="Password" required>
+      <div class="checkbox mb-3">
+          <label>
+        <input type="checkbox" value="remember-me"> Remember me
+      </label>
+      </div>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Signup</button>
+      <p class="mt-2 mb-2 text-muted text-center">&copy; 2020-2021</p>
+    </form>
+  </div>
+
+</body>
+</html>
