@@ -17,11 +17,10 @@ var userSchema = db.Schema({
         type: String,
         require: true
     },
-    posts: [{
-        type: db.Schema.Types.ObjectId,
-        ref: 'post'
-    }],
-    avatar: String,
+    avatar: {
+        type: String,
+        default: 'avatar.png'
+    },
     followers: [{
         type: db.Schema.Types.ObjectId,
         ref: 'user'

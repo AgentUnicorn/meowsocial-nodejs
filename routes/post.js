@@ -3,6 +3,9 @@ var router = express.Router();
 var Post = require('../models/post.js');
 var User = require('../models/user.js');
 var Comment = require('../models/comment.js');
+const {
+    createPost
+} = require('../controller/postCtrl')
 
 // router.route('*')
 //     .get((req, res, next) => {
@@ -12,46 +15,7 @@ var Comment = require('../models/comment.js');
 
 // Create post route 
 router.route('/create')
-    .post((req, res) => {
-        if(!req.files || Object.keys(req.files).length === 0) {
-
-            return User.findOne({_id: req.session.userId}, (err, user) => {
-                
-                var post = new Post({
-                    //lấy id của user hiện đang trong session
-                    //để làm author của post
-                    postAuthor: req.session.userId, 
-                    postContent: req.body.postContent
-                });
-                user.posts.push(post._id);
-
-                user.save(err => {
-                    post.save(err => {res.redirect('/')})
-                })
-            })
-
-        }
-
-        let image = req.files.postImage;
-        
-        // tạo đường dẫn đến thư mục lưu hình ảnh
-        let image_URL = 'public/images/' + image.name;
-
-        // lưu hình ảnh vào thư mục trong db 
-        image.mv(image_URL, function(err) {
-            if(err)
-                return res.status(500).send(err);
-            
-            var post = new Post({
-                postAuthor: req.session.userId,
-                postContent: req.body.postContent,
-                postImages: image.name
-            });
-            post.save(err => {
-                res.redirect('/');
-            })
-        })
-    })
+    .post(createPost)
 
 // Update post route
 router.route('/update')

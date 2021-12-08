@@ -5,7 +5,7 @@ var Post = require("../models/post.js");
 
 router.get("*", function (req, res, next) {
   res.locals.userId = req.session.userId;
-  console.log(req.session.usernow)
+  // console.log(req.session.usernow)
   next();
 });
 

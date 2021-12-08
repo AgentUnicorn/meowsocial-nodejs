@@ -7,9 +7,12 @@ var logger = require('morgan');
 var fileUpload = require('express-fileupload');
 var expressSession = require('express-session');
 var MongoStore = require('connect-mongo');
+// const server = require('./bin/www');
+// const socket = require('socket.io');
+const cors = require('cors');
 
-
-var commentRouter = require('./routes/comment')
+var roomRouter = require('./routes/room');
+var commentRouter = require('./routes/comment');
 var postRouter = require('./routes/post');
 var userRouter = require('./routes/user/user')
 var signinRouter = require('./routes/user/signin');
@@ -34,8 +37,14 @@ app.use(expressSession( {
   // store: MongoStore.create({mongoUrl: 'mongodb://localhost/meowsocial'})
 }))
 
-// const port = process.env.PORT || 3000;
+app.use(
+  cors({
+    origin: "*",
+    methods: ["POST","GET","DELETE","PUT"]
+  })
+)
 
+app.use('/room', roomRouter);
 app.use('/post/comment', commentRouter);
 app.use('/post', postRouter);
 app.use('/user', userRouter);

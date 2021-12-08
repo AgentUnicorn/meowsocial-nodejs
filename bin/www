@@ -7,12 +7,19 @@
 var app = require('../app');
 var debug = require('debug')('tieuluan:server');
 var http = require('http');
+var axios = require('axios');
+var Room = require('../models/room');
+var Message = require('../models/message');
+var mongoose = require('mongoose');
+const e = require('express');
+const User = require('../models/user');
+
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '8080');
 app.set('port', port);
 
 /**
@@ -20,14 +27,96 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+var io = require('socket.io')(http);
+io.listen(server);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(port, () => console.log(`Server is running on port ${port}`));
 server.on('error', onError);
 server.on('listening', onListening);
+
+io.on('connection', socket => {
+  let activeRoom = '';
+
+  //user send message
+  socket.on('send-msg', (message, sender, room) => {
+
+    Room.findOne({roomId: room}, (err, roomFound) => {
+
+      var newMsg = new Message({
+        from: sender._id,
+        message: message
+      })
+
+      if(roomFound) {
+
+        roomFound.messages.push(newMsg);
+
+        roomFound.save(function(err) {
+
+          newMsg.save(function(err) {
+            if(err) {
+              console.log(err)
+            } else {
+              socket.to(roomFound.roomId).emit('update', message, sender);
+            }
+          })
+            
+        })
+        
+      } else {
+        
+        newMsg.save(function(err) {
+          if(err) {
+            console.log(err)
+          } else {
+            socket.broadcast.emit('update', message, sender);
+          }
+        })
+
+      }
+
+    })
+
+  })
+
+  //user join a private room
+  socket.on('join-room', (room, userId) => {
+    activeRoom = room;
+
+    Room.findOne({roomId: room}, (err, roomFound) => {
+      if(roomFound) {
+
+        roomFound.participants.push(userId);
+        roomFound.save(function(err) {
+          socket.join(roomFound.roomId);
+          socket.emit('notify', roomFound.roomId);
+        })
+
+      } else {
+
+        var newRoom = new Room({
+          roomId: room,
+          participants: userId
+        })
+    
+        newRoom.save(function(err) {
+          if(err) {
+            console.log(err)
+          } else {
+            socket.join(room);
+            socket.emit('notify', room);
+          }
+        })  
+      }
+    })
+
+  })
+
+})
 
 /**
  * Normalize a port into a number, string, or false.
@@ -88,3 +177,33 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+
+/////
+// var websocket_by_room_id = {
+//   "asdasdas": [WebsocketIntance1,Instance 2]
+// }
+// function sendMsg(roomId, msg){
+//   saveMsgToRoom(roomId,msg)
+//   notifyUsersInRoom(roomId,msg)
+// }
+// functionnotifyUsersInRoom(roomId, msg){
+//   let users = websocket_by_room_id[roomId];
+//   users.forEach(element => {
+//     if(element != sender){
+//       element.send()
+//     }
+//   });
+// }
+
+
+//B1: Khi chat voi 1 user 
+// - Check exist room 
+// - Create Room  => dlaksjdkajalks
+//  Room id => join websocket = roomID 
+// []
+/// db Users, find Id = 1 
+// db Users . find all() => foreach( if( id = 1)) => 10kb
+
+//event clickUser
+//event clickNotification

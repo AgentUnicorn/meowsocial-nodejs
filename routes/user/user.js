@@ -1,8 +1,11 @@
 var express = require('express');
-const { locals } = require('../../app.js');
 var router = express.Router();
-var User = require('../../models/user.js');
-var Post = require('../../models/post.js')
+const {
+    getUserProfile,
+    updateUserProfile
+} = require('../../controller/userCtrl');
+
+// localhost:8080/user/...
 
 // Get userid from session into locals
 router.route('*')
@@ -13,62 +16,11 @@ router.route('*')
 
 // Get user profile route 
 router.route('/:id')
-    .get((req, res) => {
-        var id = req.params.id;
-        User.findOne({_id: id}, (err, userProfile) => {
-            //populate để tham chiếu từ collections post qua user
-            Post.find({postAuthor: id})
-                .populate('postAuthor')
-                .populate({
-                    path: 'comments',
-                    populate: {
-                      path: 'cmtAuthor'
-                    }
-                })
-                .exec((err, data) => {
-                    if(err) return console.log(err);
-                    data = data.reverse();
-                    res.render('profile.ejs', {userProfile, data});
-            })
-        })
-    })
+    .get(getUserProfile)
 
 // Update user info route 
-router.route('/update')
-    .post((req, res) => {
-        var id = req.body.userId;
-        var updateUsername = req.body.usernameUpdate;
-        User.findOne({_id: id}, (err, userProfile) => {
-
-            if(!req.files || Object.keys(req.files).length === 0) {
-                userProfile.username = updateUsername;
-                return userProfile.save(err => {
-                    //redirect về trang profile + id của user 
-                    res.redirect('/user/'+id);
-                })
-            }
-
-            let image = req.files.useravatarUpdate;
-            
-            // tạo đường dẫn đến thư mục lưu hình ảnh
-            let image_URL = 'public/images/' + image.name;
-
-            // lưu hình ảnh vào thư mục trong db 
-            image.mv(image_URL, function(err) {
-                if(err)
-                    return res.status(500).send(err);
-                
-                userProfile.username = updateUsername;
-                userProfile.avatar = image.name;
-
-                return user.save(err => {
-                    //redirect về trang profile + id của user 
-                    res.redirect('/user/'+id);
-                })
-            })
-
-        })
-    })
+router.route('/update/:id')
+    .post(updateUserProfile)
 
 router.route('/follow')
     .post((req, res) => {
