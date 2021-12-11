@@ -1,6 +1,7 @@
 require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
+var http = require('http')
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -11,7 +12,12 @@ var MongoStore = require('connect-mongo');
 // const socket = require('socket.io');
 const cors = require('cors');
 
-var roomRouter = require('./routes/room');
+var Room = require('./models/room');
+var Message = require('./models/message');
+var mongoose = require('mongoose');
+const User = require('./models/user');
+
+var messageRouter = require('./routes/message');
 var commentRouter = require('./routes/comment');
 var postRouter = require('./routes/post');
 var userRouter = require('./routes/user/user')
@@ -21,6 +27,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+var server = http.createServer(app);
+var io = require('socket.io')(server);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -44,7 +52,7 @@ app.use(
   })
 )
 
-app.use('/room', roomRouter);
+app.use('/message', messageRouter);
 app.use('/post/comment', commentRouter);
 app.use('/post', postRouter);
 app.use('/user', userRouter);
@@ -53,20 +61,46 @@ app.use('/register', registerRouter);
 app.use('/users', usersRouter);
 app.use('/', indexRouter);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+io.on('connection', socket => {
+  //user send message
+  socket.on('send-msg', (message, sender, room) => {
+    const temp = room.split('!@!@2@!@!').reverse().join('!@!@2@!@!');
+    Room.findOne({roomName: [temp, room]}, (err, roomFound) => {
+      if(roomFound) {
+        const newMsg = Message.create({
+          from: sender._id,
+          message: message,
+          roomId: roomFound._id
+        })
+        socket.to(roomFound.roomName)
+          .emit('receive-msg', message, sender)
+      }
+    })
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  })
+  //user join room
+  socket.on('join-room', data => {
+    const temp = data.room.split('!@!@2@!@!').reverse().join('!@!@2@!@!');
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+    Room.findOne({roomName: [temp, data.room]}, (err, room) => {
+      if(room) {
+        socket.join(room.roomName)
+        socket.emit('join-room', room.roomName)
+      } else {
+        const newRoom = Room.create({
+          roomName: data.room
+        })
+        socket.join(newRoom.roomName)
+        socket.emit('join-room', newRoom.roomName)
+      }
+    });
 
-module.exports = app;
+  })
+})
+
+const PORT = 8080;
+
+server.listen(
+  PORT,
+  () => console.log(`Server is running at port ${PORT}`)
+)
